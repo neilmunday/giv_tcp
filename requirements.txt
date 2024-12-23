@@ -1,3 +1,4 @@
+async-timeout
 gunicorn
 paho-mqtt
 givenergy-modbus
@@ -8,7 +9,7 @@ requests
 flask
 pickle-mixin
 flask-cors
-rq
+rq >= 1.16.2, < 2.0
 redis
 prometheus-client
 git+https://github.com/jace/rq-dashboard.git
