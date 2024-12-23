@@ -21,7 +21,7 @@ class GivTcpCollector:
         """
         Gather metrics from GivTCP.
         """
-        logger.info("Collecting metrics for export")
+        logger.debug("Collecting metrics for export")
 
         battery_temp_re = re.compile(r"^Battery_Cell_(?P<cell>[0-9]+)_Temperature$")
         result = json.loads(rd.pubFromPickle())
@@ -87,6 +87,23 @@ class GivTcpCollector:
                         power_gauage.add_metric([metric], value)
 
                 yield power_gauage
+
+        if "Energy" in result:
+            if "Rates" in result["Energy"]:
+                yield GaugeMetricFamily("Current_Rate", "Current Rate", value=result["Energy"]["Rates"]["Current_Rate"])
+                yield GaugeMetricFamily("Export_Rate", "Export Rate", value=result["Energy"]["Rates"]["Export_Rate"])
+            if "Total" in result["Energy"]:
+                yield CounterMetricFamily("AC_Charge_Energy_Total_kWh", "AC Charge_Energy Total kWh", value=result["Energy"]["Total"]["AC_Charge_Energy_Total_kWh"])
+                yield CounterMetricFamily("Battery_Charge_Energy_Total_kWh", "Battery Charge_Energy Total kWh", value=result["Energy"]["Total"]["Battery_Charge_Energy_Total_kWh"])
+                yield CounterMetricFamily("Battery_Discharge_Energy_Total_kWh", "Battery Discharge_Energy Total kWh", value=result["Energy"]["Total"]["Battery_Discharge_Energy_Total_kWh"])
+                yield CounterMetricFamily("Battery_Throughput_Total_kWh", "Battery Throughput Total kWh", value=result["Energy"]["Total"]["Battery_Throughput_Total_kWh"])
+                yield CounterMetricFamily("Export_Energy_Total_kWh", "Export Energy Total kWh", value=result["Energy"]["Total"]["Export_Energy_Total_kWh"])
+                yield CounterMetricFamily("Import_Energy_Total_kWh", "Import Energy Total kWh", value=result["Energy"]["Total"]["Import_Energy_Total_kWh"])
+                yield CounterMetricFamily("Invertor_Energy_Total_kWh", "Invertor Energy Total kWh", value=result["Energy"]["Total"]["Invertor_Energy_Total_kWh"])
+                yield CounterMetricFamily("Load_Energy_Total_kWh", "Load Energy Total kWh", value=result["Energy"]["Total"]["Load_Energy_Total_kWh"])
+                yield CounterMetricFamily("PV_Energy_Total_kWh", "PV Energy Total kWh", value=result["Energy"]["Total"]["PV_Energy_Total_kWh"])
+                yield CounterMetricFamily("Self_Consumption_Energy_Total_kWh", "Self Consumption Energy Total kWh", value=result["Energy"]["Total"]["Self_Consumption_Energy_Total_kWh"])
+
 
 if __name__ == "__main__":
 
